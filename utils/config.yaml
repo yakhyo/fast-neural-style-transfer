@@ -7,8 +7,8 @@ TRAIN:
   'image_size': 256                                  # Train image size, default is 256 X 256
   'style_size':                                      # Style-image size, default is the original size of style image
   'seed': 42
-  'content_weight': 1.e+5                            # Weight for content-loss, default is 1e-5
-  'style_weight': 1.e+10                             # Weight for style-loss, default is 1e-10
+  'content_weight': 1.e+5                            # Weight for content-loss, default is 1e5
+  'style_weight': 1.e+10                             # Weight for style-loss, default is 1e10
   'lr': 1.e-3                                        # Learning rate, default is 1e-3
   'log_interval': 500                                # Number of batch intervals to show stats, default is 500
 
