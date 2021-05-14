@@ -23,6 +23,21 @@ In `config.yaml`, modify inside `STYLIZE`
 - `content-scale`: factor for scaling down the content image if memory is an issue (eg: value of 2 will halve the height
   and width of content-image)
 
+**Input image:**
+
+📍 Samarkand, Uzbekistan 
+
+![uzbekistan](images/content-images/uzb.jpg)
+
+**Style image:**
+
+![style](images/style-images/candy.jpg)
+
+**Output image:**
+
+![uzbekistan-candy](images/output-images/uzb_candy_1620970536.jpg)
+
+
 **Requirements:**
 
 The program is written in Python, and uses [PyTorch](https://pytorch.org/). A GPU is not necessary, but can provide a
@@ -41,8 +56,8 @@ TRAIN:
   'image_size': 256                                  # Train image size, default is 256 X 256
   'style_size':                                      # Style-image size, default is the original size of style image
   'seed': 42
-  'content_weight': 1.e+5                            # Weight for content-loss, default is 1e-5
-  'style_weight': 1.e+10                             # Weight for style-loss, default is 1e-10
+  'content_weight': 1.e+5                            # Weight for content-loss, default is 1e5
+  'style_weight': 1.e+10                             # Weight for style-loss, default is 1e10
   'lr': 1.e-3                                        # Learning rate, default is 1e-3
   'log_interval': 500                                # Number of batch intervals to show stats, default is 500
 
@@ -50,6 +65,6 @@ STYLIZE:
   content_image: 'images/content-images/uzb.jpg'     # Path to content image you want to stylize
   content_scale: 1.0                                 # Factor for scaling down the content image, float
   output_path: 'images/output-images/'               # Path for saving the output image
-  model: 'weights/candy.pth'                         # If file is .pth - PyTorch, if file is .onnx - Caffe2
+  model: 'weights/candy.pth'                         # If file is .pth - PyTorch
 
 ```
