@@ -33,7 +33,7 @@ In `config.yaml`, modify inside `STYLIZE`
 
 ![style](images/style-images/candy.jpg)
 
-**Output image:**
+**Output image (1 epoch):**
 
 ![uzbekistan-candy](images/output-images/uzb_candy_1620970536.jpg)
 
