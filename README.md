@@ -9,7 +9,7 @@ with [Instance Normalization](https://arxiv.org/pdf/1607.08022.pdf).
 There are several arguments to change in `config.yaml`, the important ones are listed below
 
 - `dataset`: path to training dataset, the path should point to a folder containing another folder with all the training
-  images. I used COCO 2014 Training images dataset [80K/13GB] [(download)](https://cocodataset.org/#download).
+  images. I used COCO 2014 Training images dataset [83K/13GB] [(download)](https://cocodataset.org/#download).
 - `style-image`: path to style-image.
 - `save-model-dir`: path to folder where trained model will be saved.
 
