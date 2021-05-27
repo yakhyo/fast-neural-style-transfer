@@ -4,6 +4,8 @@ The model uses the method described
 in [Perceptual Losses for Real-Time Style Transfer and Super-Resolution](https://arxiv.org/abs/1603.08155) along
 with [Instance Normalization](https://arxiv.org/pdf/1607.08022.pdf).
 
+![fast neural transfer](images/img.jpg)
+
 **Train:**
 
 There are several arguments to change in `config.yaml`, the important ones are listed below
