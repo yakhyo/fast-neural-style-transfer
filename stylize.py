@@ -11,7 +11,7 @@ from utils import util
 
 
 def stylize_image(config, device, args):
-    config = config['VAL']
+    config = config['STYLIZE']
 
     # Load image
     input_image = util.load_image(args.img, scale=config['content_scale'])
