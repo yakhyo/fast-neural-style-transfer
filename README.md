@@ -4,41 +4,38 @@ The model uses the method described
 in [Perceptual Losses for Real-Time Style Transfer and Super-Resolution](https://arxiv.org/abs/1603.08155) along
 with [Instance Normalization](https://arxiv.org/pdf/1607.08022.pdf).
 
-![fast neural transfer](images/img.jpg)
-
 **Train:**
 
-There are several arguments to change in `config.yaml`, the important ones are listed below
+There are several arguments to change in `config.yaml`, the important ones are listed below:
 
 - `dataset`: path to training dataset, the path should point to a folder containing another folder with all the training
   images. I used COCO 2014 Training images dataset [83K/13GB] [(download)](https://cocodataset.org/#download).
-- `style-image`: path to style-image.
-- `save-model-dir`: path to folder where trained model will be saved.
+- `save-model-dir`: path to folder where trained models will be saved.
+
+**Run:**
+
+- `python train.py --styles images/style-images` train for all style images in `images/style-images` folder.
 
 **Stylize:**
 
 In `config.yaml`, modify inside `STYLIZE`
 
-- `content-image`: path to content image you want to stylize.
-- `model`: saved model to be used for stylizing the image (eg: mosaic.pth)
-- `output-image`: path for saving the output image.
+- `model`: path to saved models to be used for stylizing the image (eg: `weights`)
+- `output-image`: path for saving the output images.
 - `content-scale`: factor for scaling down the content image if memory is an issue (eg: value of 2 will halve the height
   and width of content-image)
 
+**Run:**
+
+- ` python stylize.py --img images/content-images/uzb.jpg`
+
 **Input image:**
 
-📍 Samarkand, Uzbekistan 
+<div style="align: center"> <img src=""> </div>
 
-![uzbekistan](images/content-images/uzb.jpg)
+📍 Samarkand, Uzbekistan
 
-**Style image:**
-
-![style](images/style-images/candy.jpg)
-
-**Output image (1 epoch):**
-
-![uzbekistan-candy](images/output-images/uzb_candy_1620970536.jpg)
-
+![fast neural transfer](images/img.png)
 
 **Requirements:**
 
@@ -51,9 +48,8 @@ using saved models.
 ```yaml
 TRAIN:
   'num_epochs': 5                                    # Number of training epochs
-  'batch_size': 4                                    # Batch size for training
-  'dataset': 'Dataset'                               # Path to training dataset
-  'style_image': 'images/style-images/mosaic.jpg'    # Path to style images
+  'batch_size': 8                                    # Batch size for training
+  'dataset': '../Datasets/train2014/'                # Path to training dataset
   'save_model_dir': 'weights'
   'image_size': 256                                  # Train image size, default is 256 X 256
   'style_size':                                      # Style-image size, default is the original size of style image
@@ -63,10 +59,9 @@ TRAIN:
   'lr': 1.e-3                                        # Learning rate, default is 1e-3
   'log_interval': 500                                # Number of batch intervals to show stats, default is 500
 
-STYLIZE:
-  content_image: 'images/content-images/uzb.jpg'     # Path to content image you want to stylize
+VAL:
   content_scale: 1.0                                 # Factor for scaling down the content image, float
-  output_path: 'images/output-images/'               # Path for saving the output image
-  model: 'weights/candy.pth'                         # If file is .pth - PyTorch
+  output_path: 'images/output-images'                # Path for saving the output image
+  models_path: 'weights'                             # Path to style models
 
 ```
