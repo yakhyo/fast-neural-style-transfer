@@ -1,8 +1,7 @@
 TRAIN:
   'num_epochs': 5                                    # Number of training epochs
-  'batch_size': 4                                    # Batch size for training
-  'dataset': 'Dataset'                               # Path to training dataset
-  'style_image': 'images/style-images/mosaic.jpg'    # Path to style images
+  'batch_size': 8                                    # Batch size for training
+  'dataset': '../Datasets/train2014/'                # Path to training dataset
   'save_model_dir': 'weights'
   'image_size': 256                                  # Train image size, default is 256 X 256
   'style_size':                                      # Style-image size, default is the original size of style image
@@ -13,7 +12,6 @@ TRAIN:
   'log_interval': 500                                # Number of batch intervals to show stats, default is 500
 
 VAL:
-  content_image: 'images/content-images/uzb.jpg'     # Path to content image you want to stylize
   content_scale: 1.0                                 # Factor for scaling down the content image, float
-  output_path: 'images/output-images/'               # Path for saving the output image
-  model: 'weights/candy.pth'                         # If file is .pth - PyTorch, if file is .onnx - Caffe2
+  output_path: 'images/output-images'                # Path for saving the output image
+  models_path: 'weights'                             # Path to style models
