@@ -59,7 +59,7 @@ TRAIN:
   'lr': 1.e-3                                        # Learning rate, default is 1e-3
   'log_interval': 500                                # Number of batch intervals to show stats, default is 500
 
-VAL:
+STYLIZE:
   content_scale: 1.0                                 # Factor for scaling down the content image, float
   output_path: 'images/output-images'                # Path for saving the output image
   models_path: 'weights'                             # Path to style models
