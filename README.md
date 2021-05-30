@@ -31,7 +31,7 @@ In `config.yaml`, modify inside `STYLIZE`
 
 **Input image:**
 
-<div style="align: center"> <img src=""> </div>
+<div align="center"> <img src="https://github.com/yakhyo/Fast-Neural-Style-Transfer/blob/master/images/content-images/uzb.jpg"> </div>
 
 📍 Samarkand, Uzbekistan
 
