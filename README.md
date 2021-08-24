@@ -39,16 +39,16 @@ In `config.yaml`, modify inside `STYLIZE`
 
 
 <div align='center'>
-  <img src='images/style-images/mosaic.jpg' height="174px">
-  <img src='images/style-images/candy.jpg' height="174px">
-  <img src='images/style-images/rain-princess.jpg' height="174px">
-  <img src='images/style-images/udnie.jpg' height="174px">
+  <img src='images/style-images/mosaic.jpg' height="170px">
+  <img src='images/style-images/candy.jpg' height="170px">
+  <img src='images/style-images/rain-princess.jpg' height="170px">
+  <img src='images/style-images/udnie.jpg' height="170px">
   <br>
   <br>
-  <img src='images/output-images/uzb_mosaic.jpg' height="174px">
-  <img src='images/output-images/uzb_candy.jpg' height="174px">
-  <img src='images/output-images/uzb_rain-princess.jpg' height="174px">
-  <img src='images/output-images/uzb_udnie.jpg' height="174px">
+  <img src='images/output-images/uzb_mosaic.jpg' height="170px">
+  <img src='images/output-images/uzb_candy.jpg' height="170px">
+  <img src='images/output-images/uzb_rain-princess.jpg' height="170px">
+  <img src='images/output-images/uzb_udnie.jpg' height="170px">
 </div>
 
 
