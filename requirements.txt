@@ -1,4 +1,4 @@
 pillow
 opencv-python
 tqdm
-yaml
+pillow
