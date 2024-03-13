@@ -35,7 +35,7 @@ In `config.yaml`, modify inside `STYLIZE`
 
 📍 Samarkand, Uzbekistan 🇺🇿
 
-<!-- ![fast neural transfer](images/img.png) -->
+<!-- ![fast neural transfer](images/amber.jpg) -->
 
 
 <div align='center'>

@@ -1,50 +1,111 @@
-import os
-import time
-
-import yaml
 import argparse
 
 import torch
-from nets.nn import TransformerNet
+import torch.onnx
 
-from utils import util
+import utils
+from model import TransformerNet
 
 
-def stylize_image(config, device, args):
-    config = config['STYLIZE']
+def stylize(args):
+    device = torch.device("cuda" if args.cuda else "cpu")
 
-    # Load image
-    input_image = util.load_image(args.img, scale=config['content_scale'])
+    content_image = utils.load_image(args.content_image, scale=args.content_scale)
+    content_transform = utils.content_transform
 
-    # Transform input image
-    input_image = util.transform(input_image)
-    input_image = input_image.unsqueeze(0).to(device)
+    content_image = content_transform(content_image)
+    content_image = content_image.unsqueeze(0).to(device)
 
-    image_name = args.img.split("/")[-1][:-4]
-    net = TransformerNet().to(device)
-    if torch.cuda.device_count() > 1:
-        net = torch.nn.DataParallel(net)
-    for i in os.listdir(config['models_path']):
-        path = f"{config['models_path']}/{i}"
-        model_name = path.split("/")[-1][:-4]
-        net.load_state_dict(torch.load(path))
+    if args.model.endswith(".onnx"):
+        output = stylize_onnx(content_image, args)
+    else:
         with torch.no_grad():
-            output = net(input_image).cpu()
-        output_image = f"{config['output_path']}/{image_name}_{model_name}.jpg"
-        # output_image = f"{config['output_path']}/{image_name}_{model_name}_{int(time.time())}.jpg"
-        util.save_image(output_image, output[0])
+            style_model = TransformerNet()
+            state_dict = torch.load(args.model)
+            style_model.load_state_dict(state_dict)
+
+            style_model.to(device)
+            style_model.eval()
+            if args.export_onnx:
+                assert args.export_onnx.endswith(".onnx"), "Export model file should end with .onnx"
+                output = torch.onnx._export(style_model, content_image, args.export_onnx, opset_version=11).cpu()
+            else:
+                output = style_model(content_image).cpu()
+    utils.save_image(args.output_image, output[0])
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--img', required=True, type=str, help='path to an image to stylize')
+def onnx_export(args):
+    device = torch.device("cuda" if args.cuda else "cpu")
+
+    content_image = utils.load_image(args.content_image, scale=args.content_scale)
+    content_transform = utils.content_transform
+
+    content_image = content_transform(content_image)
+    content_image = content_image.unsqueeze(0).to(device)
+
+    style_model = TransformerNet()
+    state_dict = torch.load(args.model)
+    style_model.load_state_dict(state_dict)
+
+    style_model.to(device)
+    style_model.eval()
+
+    assert args.export_onnx.endswith(".onnx"), "Export model file should end with .onnx"
+    output = torch.onnx._export(style_model, content_image, args.export_onnx, opset_version=11).cpu()
+
+
+def stylize_onnx(content_image, args):
+    """
+    Read ONNX model and run it using onnxruntime
+    """
+
+    assert not args.export_onnx
+
+    import onnxruntime
+
+    ort_session = onnxruntime.InferenceSession(args.model)
+
+    def to_numpy(tensor):
+        return (
+            tensor.detach().cpu().numpy()
+            if tensor.requires_grad
+            else tensor.cpu().numpy()
+        )
+
+    ort_inputs = {ort_session.get_inputs()[0].name: to_numpy(content_image)}
+    ort_outs = ort_session.run(None, ort_inputs)
+    img_out_y = ort_outs[0]
+
+    return torch.from_numpy(img_out_y)
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="Stylizing parser for fast-neural-style")
+    parser.add_argument(
+        "--content-image",
+        type=str,
+        required=False,
+        default="images/content-images/amber.jpg",
+        help="path to content image you want to stylize")
+    parser.add_argument("--content-scale", type=float, default=None, help="factor for scaling down the content image")
+    parser.add_argument("--output-image", type=str, required=True, help="path for saving the output image")
+    parser.add_argument(
+        "--model",
+        type=str,
+        required=True,
+        help="saved model to be used for stylizing the image"
+    )
+    parser.add_argument("--export_onnx", type=str, help="export ONNX model to a given file")
+    parser.add_argument('--mps', action='store_true', default=False, help='enable macOS GPU training')
+
     args = parser.parse_args()
+    return args
 
-    # Configure device
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    # Load configs
-    with open(r'utils/config.yaml') as file:
-        config = yaml.load(file, Loader=yaml.FullLoader)
+def main():
+    args = parse_args()
+    stylize(args)
 
-    stylize_image(config=config, device=device, args=args)
+
+if __name__ == '__main__':
+    main()

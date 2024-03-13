@@ -2,3 +2,7 @@ pillow
 opencv-python
 tqdm
 pillow
+torch
+torchvision
+numpy
+onnxruntime
