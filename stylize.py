@@ -10,7 +10,7 @@ from model import TransformerNet
 logging.basicConfig(format='[%(levelname)s]:%(message)s', level=logging.INFO)
 
 
-def content_image_transform(args):
+def content_image_preprocess(args):
     content_image = utils.load_image(args.content_image, scale=args.content_scale)
     content_image = utils.content_transform(content_image)
     content_image_tensor = content_image.unsqueeze(0)
@@ -19,7 +19,7 @@ def content_image_transform(args):
 
 
 def stylize(model, device, args):
-    content_image_tensor = content_image_transform(args).to(device)
+    content_image_tensor = content_image_preprocess(args).to(device)
 
     model.to(device)
     model.eval()
@@ -31,7 +31,7 @@ def stylize(model, device, args):
 
 
 def onnx_export(model, device, args):
-    content_image_tensor = content_image_transform(args).to(device)
+    content_image_tensor = content_image_preprocess(args).to(device)
 
     model.to(device)
     model.eval()
@@ -65,7 +65,7 @@ def stylize_onnx(device, args):
 
     ort_session = onnxruntime.InferenceSession(args.model)
 
-    content_image_tensor = content_image_transform(args).to(device)
+    content_image_tensor = content_image_preprocess(args).to(device)
 
     def to_numpy(tensor):
         return (
@@ -107,11 +107,11 @@ def main():
             logging.info("Export To ONNX")
             onnx_export(model, device, args)
         else:
-            logging.info("PyTorch Inference")
+            logging.info(f"PyTorch Inference | Device: {device}")
             stylize(model, device, args)
 
     if args.model.endswith(".onnx"):
-        logging.info("ONNX Inference")
+        logging.info(f"ONNX Inference | Device: {device}")
         stylize_onnx(device, args)
 
 
