@@ -1,7 +1,6 @@
 # Fast-Neural-Style 🚀
 
-The model uses the method described in [Perceptual Losses for Real-Time Style Transfer and Super-Resolution]
-(https://arxiv.org/abs/1603.08155) along with [Instance Normalization](https://arxiv.org/pdf/1607.08022.pdf).
+The model uses the method described in [Perceptual Losses for Real-Time Style Transfer and Super-Resolution](https://arxiv.org/abs/1603.08155) along with [Instance Normalization](https://arxiv.org/pdf/1607.08022.pdf).
 
 ## Table of Contents
 
@@ -168,6 +167,10 @@ optional arguments:
   --port PORT    Port number to run the server on
   --model MODEL  Model name 'candy', 'mosaic', 'rain-princess', 'udnie'
 ```
+
+<div align="center">
+    <img src="deploy/web_ui.png">
+</div>
 
 ## Contributing
 
