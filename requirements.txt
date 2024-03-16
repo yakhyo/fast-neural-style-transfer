@@ -1,4 +1,9 @@
 pillow
 opencv-python
 tqdm
-yaml
+torch
+torchvision
+numpy
+onnxruntime
+
+flask

@@ -1,82 +1,181 @@
-## Fast-Neural-Style 🚀
+# Fast-Neural-Style 🚀
 
-The model uses the method described
-in [Perceptual Losses for Real-Time Style Transfer and Super-Resolution](https://arxiv.org/abs/1603.08155) along
-with [Instance Normalization](https://arxiv.org/pdf/1607.08022.pdf).
+The model uses the method described in [Perceptual Losses for Real-Time Style Transfer and Super-Resolution](https://arxiv.org/abs/1603.08155) along with [Instance Normalization](https://arxiv.org/pdf/1607.08022.pdf).
 
-**Train:**
+## Table of Contents
 
-There are several arguments to change in `config.yaml`, the important ones are listed below:
+* [Project Description](#project-description)
+* [Installation](#installation)
+* [Usage](#usage)
+* [Contributing](#contributing)
+* [License](#license)
 
-- `dataset`: path to training dataset, the path should point to a folder containing another folder with all the training
-  images. I used COCO 2014 Training images dataset [83K/13GB] [(download)](https://cocodataset.org/#download).
-- `save-model-dir`: path to folder where trained models will be saved.
-
-**Run:**
-
-- `python train.py --styles images/style-images` train for all style images in `images/style-images` folder.
-
-**Stylize:**
-
-In `config.yaml`, modify inside `STYLIZE`
-
-- `model`: path to saved models to be used for stylizing the image (eg: `weights`)
-- `output-image`: path for saving the output images.
-- `content-scale`: factor for scaling down the content image if memory is an issue (eg: value of 2 will halve the height
-  and width of content-image)
-
-**Run:**
-
-- ` python stylize.py --img images/content-images/uzb.jpg`
-
-**Input image:**
-
-<div align="center"> <img src="https://github.com/yakhyo/Fast-Neural-Style-Transfer/blob/master/images/content-images/uzb.jpg"> </div>
-
-📍 Samarkand, Uzbekistan 🇺🇿
-
-<!-- ![fast neural transfer](images/img.png) -->
-
+## Project Description
 
 <div align='center'>
-  <img src='images/style-images/mosaic.jpg' height="170px">
-  <img src='images/style-images/candy.jpg' height="170px">
-  <img src='images/style-images/rain-princess.jpg' height="170px">
-  <img src='images/style-images/udnie.jpg' height="170px">
-  <br>
-  <br>
-  <img src='images/output-images/uzb_mosaic.jpg' height="170px">
-  <img src='images/output-images/uzb_candy.jpg' height="170px">
-  <img src='images/output-images/uzb_rain-princess.jpg' height="170px">
-  <img src='images/output-images/uzb_udnie.jpg' height="170px">
+
+<p>Style Images</p>
+    <img src='images/style-images/mosaic.jpg' height="200px">
+    <img src='images/style-images/candy.jpg' height="200px">
+    <img src='images/style-images/rain-princess.jpg' height="200px">
+    <img src='images/style-images/udnie.jpg' height="200px">
+
+<p>Content Image</p>
+    <img src='images/content-images/amber.jpg' height="500px">
+
+<p>Output Images</p>
+    <img src="images/output-images/mosaic.jpg" height="200px">
+    <img src="images/output-images/candy.jpg" height="200px">
+    <img src="images/output-images/rain-princess.jpg" height="200px">
+    <img src="images/output-images/udnie.jpg" height="200px">
 </div>
 
+## Installation
 
-**Requirements:**
+```commandline
+git clone https://github.com/yakhyo/fast-neural-style-transfer.git
+cd fast-neural-style-transfer
+```
 
-The program is written in Python, and uses [PyTorch](https://pytorch.org/). A GPU is not necessary, but can provide a
-significant speed up especially for training a new model. Regular sized images can be styled on a laptop or desktop
-using saved models.
+Create a new environment
 
-`config.yaml`:
+```commandline
+conda create --name style_transfer python=3.10
+conda activate style_transfer
+```
 
-```yaml
-TRAIN:
-  'num_epochs': 5                                    # Number of training epochs
-  'batch_size': 8                                    # Batch size for training
-  'dataset': '../Datasets/train2014/'                # Path to training dataset
-  'save_model_dir': 'weights'
-  'image_size': 256                                  # Train image size, default is 256 X 256
-  'style_size':                                      # Style-image size, default is the original size of style image
-  'seed': 42
-  'content_weight': 1.e+5                            # Weight for content-loss, default is 1e5
-  'style_weight': 1.e+10                             # Weight for style-loss, default is 1e10
-  'lr': 1.e-3                                        # Learning rate, default is 1e-3
-  'log_interval': 500                                # Number of batch intervals to show stats, default is 500
+Install dependencies
 
-STYLIZE:
-  content_scale: 1.0                                 # Factor for scaling down the content image, float
-  output_path: 'images/output-images'                # Path for saving the output image
-  models_path: 'weights'                             # Path to style models
+```commandline
+pip install -r requirements.txt
+```
+
+**Note**: ONNX model weights are provided inside `weights` folder. To download PyTorch model weights please check
+`Release`.
+
+Style transfer model deployed using Flask, please see `deploy` folder for further.
+
+## Usage
+
+Model trained using MSCOCO 2017 Training dataset.
+
+Dataset folder structure
 
 ```
+train2017-|
+          |-images-|0001.jpg
+                   |0002.jpg
+                   |xxxx.jpg
+```
+
+Training script
+
+```commandline
+python train.py --dataset path/to/dataset(e.g dataset/train2017) --style-image path/to/style/image --save-model 
+path/to/save/model --epochs 5
+```
+
+Usage of `train.py`
+
+```
+usage: train.py [-h] --dataset DATASET [--style-image STYLE_IMAGE] [--epochs EPOCHS] [--batch-size BATCH_SIZE] [--image-size IMAGE_SIZE] [--style-size STYLE_SIZE] --save-model SAVE_MODEL [--content-weight CONTENT_WEIGHT]
+                [--style-weight STYLE_WEIGHT] [--lr LR] [--log-interval LOG_INTERVAL]
+
+Training parser for fast-neural-style
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --dataset DATASET     path to training dataset
+  --style-image STYLE_IMAGE
+                        path to style-image
+  --epochs EPOCHS       number of training epochs
+  --batch-size BATCH_SIZE
+                        batch size for training
+  --image-size IMAGE_SIZE
+                        size of training images
+  --style-size STYLE_SIZE
+                        size of style-image, default is the original size of style image
+  --save-model SAVE_MODEL
+                        folder to save model weights
+  --content-weight CONTENT_WEIGHT
+                        weight for content-loss
+  --style-weight STYLE_WEIGHT
+                        weight for style-loss
+  --lr LR               learning rate
+  --log-interval LOG_INTERVAL
+                        number of images after which the training loss is logged
+```
+
+Usage of `stylize.py`
+
+```
+usage: stylize.py [-h] --content-image CONTENT_IMAGE [--content-scale CONTENT_SCALE] --output-image OUTPUT_IMAGE --model MODEL [--export-onnx EXPORT_ONNX]
+Training parser for fast-neural-style
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --dataset DATASET     path to training dataset
+  --style-image STYLE_IMAGE
+                        path to style-image
+  --epochs EPOCHS       number of training epochs
+  --batch-size BATCH_SIZE
+                        batch size for training
+  --image-size IMAGE_SIZE
+  --content-scale CONTENT_SCALE
+                        factor for scaling down the content image
+  --output-image OUTPUT_IMAGE
+                        path for saving the output image
+  --model MODEL         saved model to be used for stylizing the image
+  --export-onnx EXPORT_ONNX
+                        export ONNX model to a given file
+```
+
+Export PyTorch model to ONNX format
+
+```
+python stylize.py --model path/to/pytorch/model --content-image path/to/image --export-onnx path/to/save/onnx/model
+```
+
+Inference using PyTorch model
+
+```
+python stylize.py --model path/to/pytorch/model --content-image path/to/image --output-image path/to/save/result/image
+```
+
+Inference using ONNX model
+
+```
+python stylize.py --model path/to/onnx/model --content-image path/to/image --output-image path/to/save/result/image
+```
+
+Model deployment using Flask
+
+```
+cd deploy
+python app.py
+```
+
+Usage of `app.py`
+
+```
+usage: app.py [-h] [--port PORT] [--model MODEL]
+
+Deployment Arguments
+
+optional arguments:
+  -h, --help     show this help message and exit
+  --port PORT    Port number to run the server on
+  --model MODEL  Model name 'candy', 'mosaic', 'rain-princess', 'udnie'
+```
+
+<div align="center">
+    <img src="deploy/web_ui.png">
+</div>
+
+## Contributing
+
+If you find any issues within this code, feel free to create PR or issue.
+
+## License
+
+The project is licensed under the [MIT license](https://opensource.org/license/mit/).
