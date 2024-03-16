@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Inference</title>
+
+    <style>
+        /* CSS to set the dimensions of the images */
+        .image-container {
+            display: flex; /* Use flexbox layout */
+            margin-bottom: 20px; /* Add margin for spacing */
+        }
+
+        .image-container img {
+            max-width: 48%; /* Set max width for each image */
+            max-height: 500px; /* Set max height for each image */
+            object-fit: cover; /* Preserve aspect ratio while filling the box */
+            margin: 5px;
+        }
+
+        #uploaded-image {
+            max-width: 48%; /* Set max width for each image */
+            max-height: 500px; /* Set max height for each image */
+            object-fit: cover; /* Preserve aspect ratio while filling the box */
+            margin: 5px;
+        }
+        #uploadForm {
+            margin: 5px;
+        }
+    </style>
+
+</head>
+<body>
+<h1>Image Inference</h1>
+<form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" id="fileInput" accept="image/*">
+
+    <button type="submit">Predict</button>
+</form>
+<div id="output"></div>
+
+</body>
+</html>
+
+<script>
+    document.getElementById('fileInput').addEventListener('change', function() {
+        const fileInput = document.getElementById('fileInput');
+        const inputImage = fileInput.files[0];
+        if (!inputImage) return;
+
+        const outputDiv = document.getElementById('output');
+        outputDiv.innerHTML = ''; // Clear previous output
+
+        const inputImageUrl = URL.createObjectURL(inputImage);
+        const inputImageElement = document.createElement('img');
+        inputImageElement.src = inputImageUrl;
+        inputImageElement.alt = 'Input Image';
+        inputImageElement.id = 'uploaded-image'; // Add class for styling
+
+        outputDiv.appendChild(inputImageElement);
+    });
+
+    document.getElementById('uploadForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const fileInput = document.getElementById('fileInput');
+
+        const file = fileInput.files[0];
+        if (!file) {
+            alert('Please select an image.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('image', file);
+
+        fetch('/predict', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            const outputDiv = document.getElementById('output');
+            const outputImageUrl = '/get_image/' + encodeURIComponent(data.output_image_path.split('/').pop());
+
+            const outputImageElement = document.createElement('img');
+            outputImageElement.src = outputImageUrl;
+            outputImageElement.alt = 'Output Image';
+
+            const container = document.createElement('div');
+            container.classList.add('image-container');
+            container.appendChild(document.getElementById('output').querySelector('img'));
+            container.appendChild(outputImageElement);
+
+            outputDiv.innerHTML = ''; // Clear previous output
+            outputDiv.appendChild(container);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+
+</script>

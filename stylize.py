@@ -63,7 +63,10 @@ def stylize_onnx(device, args):
 
     import onnxruntime
 
-    ort_session = onnxruntime.InferenceSession(args.model)
+    ort_session = onnxruntime.InferenceSession(
+        args.model,
+        providers=["CUDAExecutionProvider", "CPUExecutionProvider"]
+    )
 
     content_image_tensor = content_image_preprocess(args).to(device)
 
@@ -111,7 +114,7 @@ def main():
             stylize(model, device, args)
 
     if args.model.endswith(".onnx"):
-        logging.info(f"ONNX Inference | Device: {device}")
+        logging.info(f"ONNX Inference")
         stylize_onnx(device, args)
 
 

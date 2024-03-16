@@ -13,16 +13,14 @@ import utils
 from model import TransformerNet, VGG16
 
 
-def train(args):
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
+def train(device, args):
     np.random.seed(0)
     torch.manual_seed(0)
 
     train_dataset = datasets.ImageFolder(args.dataset, transform=utils.train_transform(args.image_size))
     train_loader = DataLoader(train_dataset, batch_size=args.batch_size, num_workers=8)
 
-    # Define networks
+    # Define networks and move to device
     transformer = TransformerNet().to(device)
     vgg = VGG16(requires_grad=False).to(device)
 
@@ -88,20 +86,13 @@ def train(args):
                 )
                 print(msg)
 
-            if args.checkpoint_model is not None and (i + 1) % args.checkpoint_interval == 0:
-                transformer.eval().cpu()
-                ckpt_model_filename = "ckpt_epoch_" + str(epoch) + "_batch_id_" + str(i + 1) + ".pth"
-                ckpt_model_path = os.path.join(args.checkpoint_model, ckpt_model_filename)
-                torch.save(transformer.state_dict(), ckpt_model_path)
-                transformer.to(device).train()
-
     # save model
     transformer.eval().cpu()
-    save_model_filename = f"{os.path.splitext(os.path.basename(args.style_image))[0]}.pth"
-    save_model_path = os.path.join(args.save_model, save_model_filename)
-    torch.save(transformer.state_dict(), save_model_path)
+    filename = f"{os.path.splitext(os.path.basename(args.style_image))[0]}.pth"
+    path = os.path.join(args.save_model, filename)
+    torch.save(transformer.state_dict(), path)
 
-    print(f"\nDone, trained model saved at {save_model_path}")
+    print(f"\nDone, trained model saved at {path}")
 
 
 def parse_args():
@@ -110,12 +101,12 @@ def parse_args():
     parser.add_argument(
         "--dataset",
         type=str,
-        default="path/to/training/dataset",
+        required=True,
         help="path to training dataset"
     )
     parser.add_argument("--style-image", type=str, default="images/style-images/mosaic.jpg", help="path to style-image")
     parser.add_argument("--epochs", type=int, default=1, help="number of training epochs")
-    parser.add_argument("--batch-size", type=int, default=32, help="batch size for training")
+    parser.add_argument("--batch-size", type=int, default=4, help="batch size for training")
     parser.add_argument("--image-size", type=int, default=256, help="size of training images")
     parser.add_argument(
         "--style-size",
@@ -125,14 +116,6 @@ def parse_args():
     )
 
     parser.add_argument("--save-model", type=str, required=True, help="folder to save model weights")
-    parser.add_argument("--checkpoint-model", type=str, default=None, help="folder to save model checkpoints")
-    parser.add_argument(
-        "--checkpoint-interval",
-        type=int,
-        default=2000,
-        help="number of batches interval to create checkpoints"
-    )
-
     parser.add_argument("--content-weight", type=float, default=1e5, help="weight for content-loss")
     parser.add_argument("--style-weight", type=float, default=1e10, help="weight for style-loss")
     parser.add_argument("--lr", type=float, default=1e-3, help="learning rate")
@@ -150,17 +133,14 @@ def parse_args():
 
 def main():
     args = parse_args()
-
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     try:
-        if not os.path.exists(args.save_model):
-            os.makedirs(args.save_model)
-        if args.checkpoint_model is not None and not (os.path.exists(args.checkpoint_model)):
-            os.makedirs(args.checkpoint_model)
+        os.makedirs(args.save_model, exist_ok=True)
     except OSError as e:
         print(e)
         sys.exit(1)
 
-    train(args)
+    train(device, args)
 
 
 if __name__ == "__main__":
